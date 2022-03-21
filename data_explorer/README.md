@@ -1,15 +1,15 @@
-# 数据探索数据流
+# 抽样数据流
 本数据流的功能：
 1. 按照大表的表结构建新表
 2. 修改新表的数据存储格式为textfile
 3. 将大表的某个分区的前10条数据写入新表
 
 在本数据流中
-大表是`nlp_dev.template_final`
-小表是`nlp_dev.nlp_dev.qianyu_20220318`
+大表是`preprocess.ds_txt_final_sample`
+小表是`nlp_dev.qianyu_20220318`
 最终的小表的数据，可以通过如下命令，以txt格式在本地路径(服务器)生成
 ```bash
-hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318/the_date=2021-11/000000_0'>log.out
+hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318/the_date=2021-12-02/000000_0'>log.out
 # 将黑框输出的内容重定向到日志文件log.out
 ```
 
@@ -19,15 +19,16 @@ hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318/the_
 source /etc/profile
 source ~/.bash_profile
 
-database_name=$1
+source_database_name=$1
 source_table_name=$2
-new_table_name=$3
+new_database_name=$3
+new_table_name=$4
 
 sql_part="
-drop table if exists ${database_name}.${new_table_name};
-create table ${database_name}.${new_table_name} like ${database_name}.${source_table_name};
-alter table ${database_name}.${new_table_name} set fileformat textfile;
-alter table ${database_name}.${new_table_name} set serdeproperties('serialization.format'='\t', 'field.delim'='\t');
+drop table if exists ${new_database_name}.${new_table_name};
+create table ${new_database_name}.${new_table_name} like ${source_database_name}.${source_table_name};
+alter table ${new_database_name}.${new_table_name} set fileformat textfile;
+alter table ${new_database_name}.${new_table_name} set serdeproperties('serialization.format'='\t', 'field.delim'='\t');
 "
 
 beeline -u "jdbc:hive2://coprocessor01-fcy.hadoop.dztech.com:2181,coprocessor02-fcy.hadoop.dztech.com:2181,coprocessor03-fcy.hadoop.dztech.com:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2" -e "$sql_part"
@@ -58,14 +59,24 @@ source /etc/profile
 source ~/.bash_profile
 
 rss_path=$1
-database_name=$2
+source_database_name=$2
 source_table_name=$3
-new_table_name=$4
-pt=$5
+new_database_name=$4
+new_table_name=$5
+pt=$6
 
 sql_part="
 set hive.exec.dynamic.partition.mode=nonstrict;
-insert overwrite table ${database_name}.${new_table_name} partition(the_date) select * from ${database_name}.${source_table_name} where the_date='${pt}' limit 10;
+insert overwrite table ${new_database_name}.${new_table_name} partition(the_date,file_no) select * from ${source_database_name}.${source_table_name} where the_date='${pt}' limit 1000;
+"
+
+cd /home/${rss_path}/ && bash rss.sh "data_explorer" "nlp_dev" "$sql_part"
+
+if [[ $? != 0 ]];then
+echo "sql 运行失败！！！！！！"
+exit 1
+fi
+echo 数据写入完成
 "
 
 cd /home/${rss_path}/ && bash rss.sh "data_explorer" "nlp_dev" "$sql_part"
@@ -88,8 +99,8 @@ echo 数据写入完成
 ```bash
 #!/bin/bash -e
 baseDirForScriptSelf=$(cd "$(dirname "$0")"; pwd)
-bash ${baseDirForScriptSelf}/0_create_table.sh nlp_dev template_final qianyu_20220318
-bash ${baseDirForScriptSelf}/1_insert_data.sh nlp_dev nlp_dev template_final qianyu_20220318 2021-11
+bash ${baseDirForScriptSelf}/0_create_table.sh preprocess ds_txt_final_sample nlp_dev qianyu_20220318
+bash ${baseDirForScriptSelf}/1_insert_data.sh nlp_dev preprocess ds_txt_final_sample nlp_dev qianyu_20220318 2021-11
 ```
 脚本逻辑
 1. 变量`baseDirForScriptSelf`是当前脚本所在的路径
