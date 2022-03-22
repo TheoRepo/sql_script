@@ -9,7 +9,7 @@
 小表是`nlp_dev.qianyu_20220318`
 最终的小表的数据，可以通过如下命令，以txt格式在本地路径(服务器)生成
 ```bash
-hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318/the_date=2021-12-02/000000_0'>log.out
+hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318/the_date=2021-12-02/file_no=merge_20211202_1202_L0/part-00000-61596164-a9ba-4e59-a62c-192d8f69e9a8.c000'>log.out
 # 将黑框输出的内容重定向到日志文件log.out
 ```
 
