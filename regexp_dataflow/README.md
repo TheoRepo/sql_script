@@ -8,7 +8,7 @@
 新表是`nlp_dev.qianyu_20220318_car`
 最终的小表的数据，可以通过如下命令，以txt格式在本地路径(服务器)生成
 ```bash
-hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318_car/the_date=2021-12-02/file_no=merge_20211202_1202_L0/part-00000-de78c41e-6b5b-44e3-aa0a-50a0bc286ad1.c000'>log.out
+hdfs dfs -cat 'hdfs://fcycdh/user/hive/warehouse/nlp_dev.db/qianyu_20220318_car/the_date=2021-12-02/file_no=merge_20211202_1202_L0/part-00000-e309c715-a615-4c25-a11b-2e02e31a0b4a.c000'>log.out
 # 将黑框输出的内容重定向到日志文件log.out
 ```
 ## 0_create_table.sh
