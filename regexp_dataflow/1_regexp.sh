@@ -14,9 +14,9 @@ insert overwrite table ${new_database_name}.${new_table_name} partition(the_date
 abnormal_label regexp '正常文本' AND
 (
 app_name regexp '汽车' OR
-app_name regexp '?<[约专快打租单托拖运拼风叫机停泊有用行客货派公中吊卡重叉通出]车$' OR
+app_name regexp '(?<![约专快打租单托拖运拼风叫机停泊有用行客货派公中吊卡重叉通出])车$' OR
 suspected_app_name regexp '汽车' OR
-suspected_app_name regexp '?<[约专快打租单托拖运拼风叫机停泊有用行客货派公中吊卡重叉通出]车$' OR
+suspected_app_name regexp '(?<![约专快打租单托拖运拼风叫机停泊有用行客货派公中吊卡重叉通出])车$' OR
 msg regexp '汽车' OR
 msg regexp '看车|试驾|试乘|提车|交易车辆|买车|购车|支付.*车款|售车|车抢购|购得爱车|喜得爱车|金融方案' OR 
 msg regexp '约看(?![牙诊])|带看|询价|(询问|咨询).*价格|咨询.*销售顾问|欲购买|摇号|指标|竞价|竞得|竞拍|上拍|流拍|开拍|拍卖|流拍|报价|出价|成交|撮合邀请|感谢您来到'
