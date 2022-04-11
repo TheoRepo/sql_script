@@ -77,15 +77,6 @@ echo "sql 运行失败！！！！！！"
 exit 1
 fi
 echo 数据写入完成
-"
-
-cd /home/${rss_path}/ && bash rss.sh "data_explorer" "nlp_dev" "$sql_part"
-
-if [[ $? != 0 ]];then
-echo "sql 运行失败！！！！！！"
-exit 1
-fi
-echo 数据写入完成
 ```
 脚本逻辑
 1. `set hive.exec.dynamic.partition.mode=nonstrict;`这个属性默认值是strict,就是要求分区字段必须有一个是静态的分区值，当前设置为nonstrict,那么可以全部动态分区
